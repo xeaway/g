@@ -41,7 +41,7 @@ var g =
 			p.f = o.f || true; // fill
 			p.font = o.font || 'Arial'; // font family
 			p.h = o.h || undefined; // height
-			p.i = g.l.i (o.i) || undefined; // image.src
+			p.i = o.i || undefined; // image.src
 			p.id = g.b.length;
 			p.l = o.l || 1; // lineWidth
 			p.n = o.n || undefined; // name
@@ -70,7 +70,7 @@ var g =
 			for (var id in g.b)
 			{
 				var p = g.b[id];
-				var h = g.rel.v(p.h);
+				var h = g.rel.v (p.h);
 				var r = g.rel.r (p.r);
 				var s = g.rel.v (p.s);
 				var w = g.rel.h (p.w);
@@ -87,9 +87,14 @@ var g =
 						break;
 
 					case 'image':
-						h = (p.h) ? g.rel.v(p.h) : p.i.height;
-						w = (p.w) ? g.rel.h (p.w) : p.i.width;
-						g.cvs.ctx.drawImage (i, x, y, w, h);
+						var i = new Image ();
+							i.src = p.i;
+							i.onload = function ()
+							{
+								h = (p.h) ? g.rel.v(p.h) : i.height;
+								w = (p.w) ? g.rel.h (p.w) : i.width;
+								g.cvs.ctx.drawImage (i, x, y, w, h);
+							};
 						break;
 
 					case 'round':
@@ -113,23 +118,6 @@ var g =
 	},
 
 	e: {},
-
-	l:
-	{
-		i: function (src)
-		{
-			if (src)
-			{
-				var img = new Image ();
-					img.src = src;
-
-					img.onload = function ()
-					{
-						return img;
-					};
-			} else { return src };
-		}
-	},
 
 	set log (s) { window.console.log (s); },
 
