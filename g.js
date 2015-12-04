@@ -6,7 +6,43 @@ var g =
 
 	c:
 	{
+		set b (o)
+		{
+			var b = {};
+				b.c = o.c || '#000';
+				b.h = o.h || 0;
+				b.n = o.n || undefined;
+				b.t = o.t || undefined;
+				b.w = o.h || 0;
+				b.x = o.x || 0;
+				b.y = o.y || 0;
 
+				b.a = function ()
+				{
+					if (g.e.type == 'mousedown')
+					{
+						var ch = g.rel.v (b.h);
+						var cw = g.rel.h (b.w);
+						var cx = g.rel.h (b.x);
+						var cy = g.rel.v (b.y);
+						var inx = ((g.e.x >= cx) && (g.e.x <= cx + cw));
+						var iny = ((g.e.y >= cy) && (g.e.y <= cy + ch));
+						if (inx && iny)
+						{
+							o.a ();
+						};
+					};
+				};
+
+				g.d = { c: b.c, h: b.h, n: b.n, w: b.w, x: b.x, y: b.y };
+
+				b.update = function ()
+				{
+					b.a ();
+				};
+
+			g.o.push (b);
+		}
 	},
 
 	cvs:
@@ -16,6 +52,20 @@ var g =
 			var cvs = window.document.createElement ('canvas');
 				cvs.ctx = cvs.getContext ('2d');
 				cvs.style.position = 'absolute';
+
+				cvs.clear = function (name)
+				{
+					var clear = [];
+					for (var i = 0; i < g.b.length; i++)
+					{
+						if (name != g.b[i].n)
+						{
+							clear.push (g.b[i]);
+						};
+					};
+					g.b = clear;
+					g.cvs.redraw = true;
+				};
 
 				cvs.resize = function (run)
 				{
@@ -67,6 +117,7 @@ var g =
 		g.cvs.resize ();
 		if (g.cvs.redraw)
 		{
+			g.cvs.ctx.clearRect (0, 0, g.cvs.width, g.cvs.height);
 			for (var id in g.b)
 			{
 				var p = g.b[id];
@@ -80,6 +131,7 @@ var g =
 				switch (p.type)
 				{
 					case 'box':
+						g.cvs.ctx.beginPath ();
 						g.cvs.ctx.fillStyle = p.c;
 						g.cvs.ctx.lineWidth = p.l;
 						g.cvs.ctx.strokeStyle = p.c;
@@ -87,14 +139,9 @@ var g =
 						break;
 
 					case 'image':
-						var i = new Image ();
-							i.src = p.i;
-							i.onload = function ()
-							{
-								h = (p.h) ? g.rel.v(p.h) : i.height;
-								w = (p.w) ? g.rel.h (p.w) : i.width;
-								g.cvs.ctx.drawImage (i, x, y, w, h);
-							};
+							h = (p.h) ? g.rel.v(p.h) : p.i.height;
+							w = (p.w) ? g.rel.h (p.w) : p.i.width;
+							g.cvs.ctx.drawImage (p.i, x, y, w, h);
 						break;
 
 					case 'round':
@@ -119,7 +166,27 @@ var g =
 
 	e: {},
 
+	i:
+	{
+		set l (o)
+		{
+			var i = new Image ();
+				i.src = o.i;
+			g.i[o.id] = i;
+		}
+	},
+
+	input: function ()
+	{
+		for (var id in g.o)
+		{
+			g.o[id].update ();
+		};
+	},
+
 	set log (s) { window.console.log (s); },
+
+	o: [],
 
 	rel:
 	{
@@ -179,6 +246,7 @@ var g =
 
 	u: function ()
 	{
+		g.input ();
 		g.draw ();
 	}
 };
