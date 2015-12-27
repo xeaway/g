@@ -11,37 +11,119 @@ var g =
 			var b = {};
 				b.c = o.c || '#000';
 				b.h = o.h || 0;
-				b.n = o.n || undefined;
+				b.i = o.i || undefined;
+				b.i2 = o.i2 || undefined;
+				b.i3 = o.i3 || undefined;
+				b.id = g.o.length;
+				b.n = o.n || b.id;
+				b.redraw = true;
+				b.s = true;
 				b.t = o.t || undefined;
 				b.w = o.h || 0;
 				b.x = o.x || 0;
 				b.y = o.y || 0;
 
-				b.a = function ()
+				b.a = function (b)
 				{
 					if (g.e.type == 'mousedown')
 					{
-						var ch = g.rel.v (b.h);
-						var cw = g.rel.h (b.w);
+						var ch = (b.i) ? g.rel.v (b.i.height) : g.rel.v (b.h);
+						var cw = (b.i) ? g.rel.v (b.i.width) : g.rel.h (b.w);
 						var cx = g.rel.h (b.x);
 						var cy = g.rel.v (b.y);
 						var inx = ((g.e.x >= cx) && (g.e.x <= cx + cw));
 						var iny = ((g.e.y >= cy) && (g.e.y <= cy + ch));
 						if (inx && iny)
 						{
-							o.a ();
+							o.a (b);
 						};
 					};
 				};
 
-				g.d = { c: b.c, h: b.h, n: b.n, w: b.w, x: b.x, y: b.y };
+				b.d = function ()
+				{
+					if (b.redraw)
+					{
+						if (b.s)
+						{
+							if (b.i)
+							{
+								switch (g.e.type)
+								{
+									case 'mousedown':
+										g.d = { i: b.i3, n: b.n, x: b.x, y: b.y };
+										break;
+									case 'movemouse':
+										g.d = { i: b.i2, n: b.n, x: b.x, y: b.y };
+										break;										
+									default:
+										g.d = { i: b.i, n: b.n, x: b.x, y: b.y };
+										break;
+								};	
+							}
+							else
+							{
+								g.d = { c: b.c, h: b.h, n: b.n, w: b.w, x: b.x, y: b.y };	
+							};								
+						};
+						b.redraw = false;
+					};
+				};
+
+				b.hide = function ()
+				{
+					b.s = false;
+					g.cvs.clear (b.n);
+				};
+
+				b.show = function ()
+				{
+					b.s = true;	
+				};
+
+				b.u = function ()
+				{
+					var ch = (b.i) ? g.rel.v (b.i.height) : g.rel.v (b.h);
+					var cw = (b.i) ? g.rel.v (b.i.width) : g.rel.h (b.w);
+					var cx = g.rel.h (b.x);
+					var cy = g.rel.v (b.y);
+					var inx = ((g.e.x >= cx) && (g.e.x <= cx + cw));
+					var iny = ((g.e.y >= cy) && (g.e.y <= cy + ch));
+					if (inx && iny)
+					{
+						if (g.e.type == 'mousedown')
+						{
+							g.cvs.clear (b.n);
+							g.d = { i: b.i3, n: b.n, x: b.x, y: b.y };
+							b.redraw = true;
+						};
+
+						if (g.e.type == 'mousemove')
+						{
+							g.cvs.clear (b.n);
+							g.d = { i: b.i2, n: b.n, x: b.x, y: b.y };
+							b.redraw = true;
+						};
+					}
+					else
+					{
+						g.cvs.clear (b.n);
+						g.d = { i: b.i, n: b.n, x: b.x, y: b.y };
+						b.redraw = true;
+					};
+				};
 
 				b.update = function ()
 				{
-					b.a ();
+					if (b.s)
+					{
+						b.a (b);
+						
+						b.d ();b.u ();
+					};
 				};
 
-			g.o.push (b);
+			g.o[b.id] = b;
 		}
 	},
 
